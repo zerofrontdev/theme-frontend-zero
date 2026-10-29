@@ -9,6 +9,14 @@
  * value). On mobile the whole panel is one more <details>, closed; desktop
  * forces it open via `::details-content`.
  *
+ * The links inside are boosted into #page-columns (hx-boost and its target
+ * here, once). Only the first LAZY_AFTER filters (and any with a value
+ * chosen) carry their options; the others load theirs when opened: the same
+ * page with ?zf=<filter>, which renders that one in full (a catalogue with
+ * 300 filterable attributes made a 5 MB category page). A closed group is
+ * a few bytes: its look is by class (src/styles/utilities.css: the title,
+ * the chevron) and its loading attributes are inherited from the list.
+ *
  * @var \Magento\LayeredNavigation\Block\Navigation $block
  * @var \Magento\Framework\Escaper $escaper
  */
@@ -24,17 +32,22 @@
                     </svg>
                 </span>
             </summary>
-            <div class="block-content filter-content">
+            <div class="block-content filter-content" hx-boost="true" hx-target="#page-columns" hx-select="#page-columns" hx-swap="outerHTML" hx-push-url="true">
                 <?= $block->getChildHtml('state') ?>
 
                 <?php if ($block->getLayer()->getState()->getFilters()) : ?>
                     <div class="block-actions filter-actions mb-4">
-                        <a href="<?= $escaper->escapeUrl($block->getClearUrl()) ?>" class="action clear filter-clear link link-neutral text-sm no-underline hover:underline">
+                        <a rel="nofollow" href="<?= $escaper->escapeUrl($block->getClearUrl()) ?>" class="action clear filter-clear link link-neutral text-sm no-underline hover:underline">
                             <span><?= $escaper->escapeHtml(__('Clear All')) ?></span>
                         </a>
                     </div>
                 <?php endif; ?>
                 <?php $wrapOptions = false; ?>
+                <?php
+                $lazyAfter = 12;
+                $shown = 0;
+                $only = (string) $block->getRequest()->getParam('zf');
+                ?>
                 <?php foreach ($block->getFilters() as $filter) : ?>
                     <?php if (!$wrapOptions) : ?>
                         <div class="block-title filter-title mb-1.5 pb-3 border-b border-base-300">
@@ -44,7 +57,8 @@
                                     class="text-base-content/60"><?= $escaper->escapeHtml(__('Refine Your Edit')) ?></span>
                             </strong>
                         </div>
-                        <div class="filter-options flex flex-col" id="narrow-by-list">
+                        <?php // The closed groups' loading, inherited by each (hx-get and hx-trigger are their own): the group's options from the page with ?zf=<code> (#zf-options). ?>
+                        <div class="filter-options flex flex-col" id="narrow-by-list" hx-target="find .filter-options-content" hx-select="#zf-options" hx-swap="outerHTML" hx-push-url="false">
                         <?php $wrapOptions = true;
                     endif; ?>
                         <?php if ($filter->getItemsCount()) : ?>
@@ -53,16 +67,22 @@
                             $isChosen = (method_exists($filter, 'getChosenValues') && $filter->getChosenValues())
                                 || (method_exists($filter, 'getChosenRange') && $filter->getChosenRange());
                             ?>
-                            <details class="filter-options-item border-b border-base-300"<?= $isChosen ? ' open' : '' ?>>
-                                <summary role="heading" aria-level="2" class="filter-options-title flex items-center justify-between gap-2 cursor-pointer py-3 text-sm font-semibold uppercase tracking-wide list-none [&::-webkit-details-marker]:hidden">
-                                    <?= $escaper->escapeHtml(__($filter->getName())) ?>
-                                    <svg class="filter-options-chevron size-4 shrink-0 text-base-content/60 transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                    </svg>
-                                </summary>
-                                <div class="filter-options-content pb-4">
-                                    <?= /* @noEscape */ $block->getChildBlock('renderer')->render($filter) ?>
-                                </div>
+                            <?php
+                            $code = (string) $filter->getRequestVar();
+                            $full = $isChosen || $shown++ < $lazyAfter || $only === $code;
+                            $lazyUrl = $full ? '' : $block->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true, '_query' => ['zf' => $code]]);
+                            ?>
+                            <details id="filter-<?= $escaper->escapeHtmlAttr($code) ?>" class="filter-options-item"<?= $isChosen ? ' open' : '' ?><?php if (!$full): ?>
+                                hx-get="<?= $escaper->escapeUrl($lazyUrl) ?>" hx-trigger="toggle once"<?php endif; ?>>
+                                <summary role="heading" aria-level="2" class="filter-options-title"><?= $escaper->escapeHtml(__($filter->getName())) ?></summary>
+                                <?php if ($full): ?>
+                                    <?php // Its links boost into #page-columns again: the list above sets the closed groups' loading. ?>
+                                    <div class="filter-options-content"<?= $only === $code ? ' id="zf-options"' : '' ?> hx-target="#page-columns" hx-select="#page-columns" hx-swap="outerHTML" hx-push-url="true">
+                                        <?= /* @noEscape */ $block->getChildBlock('renderer')->render($filter) ?>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="filter-options-content"><span class="loading loading-dots loading-sm" aria-label="<?= $escaper->escapeHtmlAttr(__('Loading...')) ?>"></span></div>
+                                <?php endif; ?>
                             </details>
                         <?php endif; ?>
                 <?php endforeach; ?>

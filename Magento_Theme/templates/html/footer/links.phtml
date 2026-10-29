@@ -23,6 +23,8 @@ $headingClass = 'block w-full text-sm font-bold uppercase tracking-wider text-pr
 $categoryMap = [
     'privacy-policy-link' => 'legal',
     'zero-cookie-settings-link' => 'legal',
+    'terms-of-service-link' => 'legal',
+    'refund-policy-link' => 'legal',
     'sales-guest-form-link' => 'account',
     'contact-us-link' => 'help',
     'catalog-search-advanced-link' => 'help',
@@ -30,6 +32,8 @@ $categoryMap = [
     'zero-store-locator-link' => 'company',
 ];
 
+/** @var \Zero\Core\ViewModel\CmsPages|null $cmsPages the theme's fixed links only to pages this store view has */
+$cmsPages = $block->getData('cmsPages');
 $groups = ['company' => [], 'account' => [], 'help' => [], 'legal' => []];
 foreach ($block->getLinks() as $link) {
     $group = $categoryMap[$link->getNameInLayout()] ?? 'help';
@@ -42,11 +46,13 @@ foreach ($block->getLinks() as $link) {
             <?= $escaper->escapeHtml(__('Company')) ?>
         </h2>
         <ul class="flex flex-col gap-2.5 text-sm">
-            <li class="list-none">
-                <a href="<?= $escaper->escapeUrl($block->getUrl('about-us')) ?>" class="<?= $escaper->escapeHtmlAttr($linkClass) ?>">
-                    <?= $escaper->escapeHtml(__('About Us')) ?>
-                </a>
-            </li>
+            <?php if (!$cmsPages || $cmsPages->has('about-us')): ?>
+                <li class="list-none">
+                    <a href="<?= $escaper->escapeUrl($block->getUrl('about-us')) ?>" class="<?= $escaper->escapeHtmlAttr($linkClass) ?>">
+                        <?= $escaper->escapeHtml(__('About Us')) ?>
+                    </a>
+                </li>
+            <?php endif; ?>
             <?php foreach ($groups['company'] as $linkHtml): ?>
                 <?= /* @noEscape */ $linkHtml ?>
             <?php endforeach; ?>
@@ -80,11 +86,13 @@ foreach ($block->getLinks() as $link) {
             <?php foreach ($groups['help'] as $linkHtml): ?>
                 <?= /* @noEscape */ $linkHtml ?>
             <?php endforeach; ?>
-            <li class="list-none">
-                <a href="<?= $escaper->escapeUrl($block->getUrl('customer-service')) ?>" class="<?= $escaper->escapeHtmlAttr($linkClass) ?>">
-                    <?= $escaper->escapeHtml(__('Customer Service')) ?>
-                </a>
-            </li>
+            <?php if (!$cmsPages || $cmsPages->has('customer-service')): ?>
+                <li class="list-none">
+                    <a href="<?= $escaper->escapeUrl($block->getUrl('customer-service')) ?>" class="<?= $escaper->escapeHtmlAttr($linkClass) ?>">
+                        <?= $escaper->escapeHtml(__('Customer Service')) ?>
+                    </a>
+                </li>
+            <?php endif; ?>
         </ul>
     </div>
     <?php if ($groups['legal']): ?>

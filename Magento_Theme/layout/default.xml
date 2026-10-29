@@ -72,7 +72,11 @@
             matching the reference's own header row order.
         -->
         <move element="top.links" destination="header-wrapper" after="minicart"/>
-        <referenceBlock name="footer_links" template="Magento_Theme::html/footer/links.phtml"/>
+        <referenceBlock name="footer_links" template="Magento_Theme::html/footer/links.phtml">
+            <arguments>
+                <argument name="cmsPages" xsi:type="object">Zero\Core\ViewModel\CmsPages</argument>
+            </arguments>
+        </referenceBlock>
         <referenceBlock name="privacy-policy-link">
             <arguments>
                 <argument name="attributes" xsi:type="array">

@@ -33,7 +33,7 @@
                     <span class="filter-value font-medium"><?= $block->escapeHtml($block->stripTags($_filter->getLabel())) ?></span>
                     <?php if ($zero) : ?>
                         <?php $removeUrl = $zero->removeUrl($_filter); ?>
-                        <a class="action remove btn btn-circle btn-ghost btn-xs"
+                        <a rel="nofollow" class="action remove btn btn-circle btn-ghost btn-xs"
                            href="<?= $block->escapeUrl($removeUrl) ?>"
                            hx-get="<?= $block->escapeUrl($removeUrl) ?>"
                            hx-target="#page-columns" hx-select="#page-columns"
@@ -43,7 +43,7 @@
                             &times;
                         </a>
                     <?php elseif ($clearLinkUrl) : ?>
-                        <a class="action previous btn btn-circle btn-ghost btn-xs"
+                        <a rel="nofollow" class="action previous btn btn-circle btn-ghost btn-xs"
                            href="<?= $block->escapeUrl($_filter->getRemoveUrl()) ?>"
                            hx-get="<?= $block->escapeUrl($_filter->getRemoveUrl()) ?>"
                            hx-target="#page-columns" hx-select="#page-columns"
@@ -52,7 +52,7 @@
                            aria-label="<?= $block->escapeHtmlAttr(__('Previous')) ?>">
                             &lsaquo;
                         </a>
-                        <a class="action remove btn btn-circle btn-ghost btn-xs"
+                        <a rel="nofollow" class="action remove btn btn-circle btn-ghost btn-xs"
                            href="<?= $block->escapeUrl($clearLinkUrl) ?>"
                            hx-get="<?= $block->escapeUrl($clearLinkUrl) ?>"
                            hx-target="#page-columns" hx-select="#page-columns"
@@ -62,7 +62,7 @@
                             &times;
                         </a>
                     <?php else : ?>
-                        <a class="action remove btn btn-circle btn-ghost btn-xs"
+                        <a rel="nofollow" class="action remove btn btn-circle btn-ghost btn-xs"
                            href="<?= $block->escapeUrl($_filter->getRemoveUrl()) ?>"
                            hx-get="<?= $block->escapeUrl($_filter->getRemoveUrl()) ?>"
                            hx-target="#page-columns" hx-select="#page-columns"

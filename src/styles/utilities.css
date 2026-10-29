@@ -93,9 +93,34 @@
         margin-top: 1.5rem;
     }
 
-    /* Chevron rotation on `[open]` — no Tailwind utility reaches a sibling through a parent attribute selector. */
-    .filter-options-item[open] > summary .filter-options-chevron {
+    /*
+     * A filter group by class, not by utilities and an inline chevron repeated in every group: a big catalogue's
+     * category has 300 groups, and those came to over 150 KB of its page (layer/view.phtml).
+     */
+    .filter-options-item {
+        @apply border-b border-base-300;
+    }
+
+    .filter-options-title {
+        @apply flex items-center justify-between gap-2 cursor-pointer py-3 text-sm font-semibold uppercase tracking-wide list-none;
+    }
+
+    .filter-options-title::-webkit-details-marker {
+        display: none;
+    }
+
+    .filter-options-title::after {
+        content: '';
+        @apply size-4 shrink-0 bg-base-content/60 transition-transform duration-200;
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m19.5 8.25-7.5 7.5-7.5-7.5'/%3E%3C/svg%3E") center / contain no-repeat;
+    }
+
+    .filter-options-item[open] > .filter-options-title::after {
         transform: rotate(180deg);
+    }
+
+    .filter-options-content {
+        @apply pb-4;
     }
 
     /* Mobile filter panel: collapsed `<details>` wrapper around the whole sidebar, closed by default. */

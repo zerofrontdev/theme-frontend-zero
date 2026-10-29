@@ -67,14 +67,13 @@ $viewModel = $block->getViewModel();
                                         </form>
                                     <?php endif ?>
                                     <?php if ($viewModel->canCancel($_order->getEntityId())): ?>
-                                        <a href="#" class="cancel-order" data-role="cancel-order-trigger"
-                                           data-target="cancel-order-modal-<?= (int) $_order->getId() ?>">
+                                        <button type="button" class="cancel-order link link-neutral text-sm no-underline hover:underline"
+           data-dialog-open="#cancel-order-modal-<?= (int) $_order->getId() ?>">
                                             <span><?= $block->escapeHtml(__('Cancel Order')) ?></span>
-                                        </a>
+                                        </button>
                                         <?= $this->getLayout()->createBlock("Magento\Framework\View\Element\Template")
                                             ->setOrder($_order)
                                             ->setReasons($viewModel->getCancellationReasons($_order->getEntityId()))
-                                            ->setGraphqlUrl($block->getBaseUrl() . 'graphql')
                                             ->setTemplate("Magento_OrderCancellationUi::cancel-order-modal.phtml")->toHtml()
                                         ?>
                                     <?php endif ?>

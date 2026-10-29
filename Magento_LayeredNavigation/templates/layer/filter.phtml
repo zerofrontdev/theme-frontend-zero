@@ -5,9 +5,11 @@
  * Modifications copyright © 2026 Roman Pasichnyk
  * SPDX-License-Identifier: OSL-3.0 OR AFL-3.0
  *
- * Filter options: stock's links with hx-get into #page-columns (same href
- * without HTMX). With Zero_LayeredNavigation: multi-select checkboxes,
- * "Show more", and a price from/to form with a two-handle slider.
+ * Filter options: plain links, boosted into #page-columns by the filter
+ * block (view.phtml: one set of hx-* attributes for all of them, not one per
+ * link: a big catalogue had 3 600 options at 1.2 KB each). With
+ * Zero_LayeredNavigation: multi-select checkboxes, "Show more", and a price
+ * from/to form with a two-handle slider.
  *
  * @var \Magento\LayeredNavigation\Block\Navigation\FilterRenderer $block
  * @var \Magento\Framework\Escaper $escaper
@@ -75,11 +77,7 @@ $hx = 'hx-target="#page-columns" hx-select="#page-columns" hx-swap="outerHTML" h
                 <?php $chosen = $multi && $zero->isChosen($filterItem); ?>
                 <li class="item">
                     <?php if ($filterItem->getCount() > 0 || $chosen): ?>
-                        <a
-                            href="<?= $escaper->escapeUrl($filterItem->getUrl()) ?>"
-                            hx-get="<?= $escaper->escapeUrl($filterItem->getUrl()) ?>"
-                            <?= /* @noEscape */ $hx ?>
-                            rel="nofollow"
+                        <a rel="nofollow" href="<?= $escaper->escapeUrl($filterItem->getUrl()) ?>"
                             <?php if ($multi): ?>role="checkbox" aria-checked="<?= $chosen ? 'true' : 'false' ?>"<?php endif; ?>
                             class="flex items-center justify-between gap-2 rounded-field<?= $chosen ? ' font-semibold' : '' ?>"
                         ><span class="flex items-center gap-2 min-w-0"><?php if ($multi): ?><span

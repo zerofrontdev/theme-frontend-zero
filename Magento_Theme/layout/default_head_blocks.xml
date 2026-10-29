@@ -5,6 +5,8 @@
     Tailwind CSS, htmx.min.js and js/zero.js in.
     - app.css stays render-blocking: a preload swap measured CLS = 1.
     - htmx allowEval:false: the strict CSP forbids eval.
+    - htmx is deferred, not render-blocking: it only starts on DOMContentLoaded
+      anyway, and every script that uses it is deferred after it (order kept).
     - requirejs-config is removed as a block: on checkout success its insert
       worked and require.config() threw on every order.
 -->
@@ -21,7 +23,7 @@
              with other fonts removes them (<remove src="…"/>): they compete with the LCP image. -->
         <link src="fonts/dm-sans-latin-400-700.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/>
         <link src="fonts/instrument-serif-italic-400.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/>
-        <script src="js/htmx.min.js"/>
+        <script src="js/htmx.min.js" defer="defer"/>
         <script src="js/zero.js" defer="defer"/>
         <meta name="htmx-config" content="{&quot;allowEval&quot;:false}"/>
         <meta name="format-detection" content="telephone=no"/>

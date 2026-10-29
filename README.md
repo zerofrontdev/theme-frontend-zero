@@ -35,6 +35,11 @@ deploy does it: [docs/build.md](docs/build.md).
 
 ## Docs
 
+- [getting-started.md](docs/getting-started.md): install, where things are, how a page works, your first change.
+- [migrating.md](docs/migrating.md): moving a live store to Zero, from Luma or a custom theme.
+- [upgrading.md](docs/upgrading.md): updating Zero, rebuilding, checking your overrides.
+- [troubleshooting.md](docs/troubleshooting.md): the usual first-week problems and their fixes.
+- [contributing.md](docs/contributing.md): issues, pull requests, compat modules.
 - [build.md](docs/build.md): the CSS and JavaScript build, step by step.
 - [extensions.md](docs/extensions.md): how a module adds templates, styles
   and HTMX fragments; compat modules for third-party extensions.

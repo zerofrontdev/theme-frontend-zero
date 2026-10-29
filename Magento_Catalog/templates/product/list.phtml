@@ -175,6 +175,7 @@ $_helper = $block->getData('outputHelper');
     <div class="products wrapper <?= /* @noEscape */ $viewMode ?> products-<?= /* @noEscape */ $viewMode ?>">
         <ol class="products list items product-items">
             <?php /** @var $_product \Magento\Catalog\Model\Product */ ?>
+            <?php $cardIndex = 0; ?>
             <?php foreach ($_productCollection as $_product): ?>
                 <?php
                 $postParams = $block->getAddToCartPostParams($_product);
@@ -182,6 +183,14 @@ $_helper = $block->getData('outputHelper');
                     '%%zero-tocart-action%%' => $escaper->escapeUrl($postParams['action']),
                     '%%zero-tocart-uenc%%' => $escaper->escapeHtmlAttr($postParams['data'][Action::PARAM_NAME_URL_ENCODED]),
                 ];
+                // The first row is above the fold (2 cards on phones, up to 4 on desktop) and holds the page's
+                // largest image: load those pictures at once, the first two first. On output, not in the cached card.
+                if ($cardIndex < 4) {
+                    $replace['loading="lazy"'] = $cardIndex < 2
+                        ? 'loading="eager" fetchpriority="high"'
+                        : 'loading="eager"';
+                }
+                $cardIndex++;
                 ?>
                 <?= /* @noEscape */ $cardCache
                     ? $cardCache->render(

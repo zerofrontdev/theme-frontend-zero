@@ -39,7 +39,7 @@ foreach ($block->getAvailableOrders() as $_key => $_order) {
                 <?php else :
                     $orderUrl = $block->getPagerUrl(['product_list_order' => $_key]);
                     ?>
-                    <a href="<?= $block->escapeUrl($orderUrl) ?>"
+                    <a rel="nofollow" href="<?= $block->escapeUrl($orderUrl) ?>"
                        hx-get="<?= $block->escapeUrl($orderUrl) ?>"
                        hx-target="#page-columns" hx-select="#page-columns"
                        hx-swap="outerHTML" hx-push-url="true">
@@ -51,7 +51,7 @@ foreach ($block->getAvailableOrders() as $_key => $_order) {
         <li class="sorter-separator" role="separator" aria-hidden="true"></li>
         <li class="item">
             <?php if ($currentDirection == 'desc') :?>
-                <a title="<?= $block->escapeHtmlAttr(__('Set Ascending Direction')) ?>"
+                <a rel="nofollow" title="<?= $block->escapeHtmlAttr(__('Set Ascending Direction')) ?>"
                    href="<?= $block->escapeUrl($directionUrl) ?>"
                    hx-get="<?= $block->escapeUrl($directionUrl) ?>"
                    hx-target="#page-columns" hx-select="#page-columns"
@@ -60,7 +60,7 @@ foreach ($block->getAvailableOrders() as $_key => $_order) {
                     <?= $block->escapeHtml(__('Set Ascending Direction')) ?>
                 </a>
             <?php else :?>
-                <a title="<?= $block->escapeHtmlAttr(__('Set Descending Direction')) ?>"
+                <a rel="nofollow" title="<?= $block->escapeHtmlAttr(__('Set Descending Direction')) ?>"
                    href="<?= $block->escapeUrl($directionUrl) ?>"
                    hx-get="<?= $block->escapeUrl($directionUrl) ?>"
                    hx-target="#page-columns" hx-select="#page-columns"

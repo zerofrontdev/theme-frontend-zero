@@ -6,9 +6,11 @@
  * SPDX-License-Identifier: OSL-3.0 OR AFL-3.0
  *
  * Order cancellation dialog. Stock has only the GraphQL `cancelOrder`
- * mutation, so this needs JS: a <dialog> and one delegated listener
- * (guarded by window.__zeroCancelOrderInit). Confirm posts the mutation with
- * the reason; errors show in the status region, success reloads.
+ * mutation behind a script; here it is a plain form posting to
+ * zero/order/cancel (Zero_Core), no script of its own: the "Cancel Order"
+ * button opens the <dialog> through zero.js's [data-dialog-open], Close is a
+ * <form method="dialog"> button, Confirm posts. The answer is a message on
+ * the order's page. The reason goes as its key in the configured list.
  *
  * @var \Magento\Framework\View\Element\Template $block
  * @var $escaper Magento\Framework\Escaper
@@ -16,32 +18,29 @@
 $order = $block->getOrder();
 $orderId = (int) $order->getId();
 $dialogId = 'cancel-order-modal-' . $orderId;
-$graphqlUrl = $block->getGraphqlUrl();
 ?>
-<dialog id="<?= $escaper->escapeHtmlAttr($dialogId) ?>" class="cancel-order-modal modal"
-        data-graphql-url="<?= $escaper->escapeHtmlAttr($graphqlUrl) ?>"
-        data-order-id="<?= /* @noEscape */ $orderId ?>">
-    <div class="modal-box">
+<dialog id="<?= $escaper->escapeHtmlAttr($dialogId) ?>" class="cancel-order-modal modal">
+    <form method="post" action="<?= $escaper->escapeUrl($block->getUrl('zero/order/cancel')) ?>" class="modal-box">
+        <?= $block->getBlockHtml('formkey') ?>
+        <input type="hidden" name="order_id" value="<?= /* @noEscape */ $orderId ?>">
         <h3><?= $escaper->escapeHtml(__('Cancel order')) ?>
             <span class="cancel-order-id"><?= $escaper->escapeHtml($order->getRealOrderId()) ?></span>
         </h3>
         <p><?= $escaper->escapeHtml(__('Provide a cancellation reason:')) ?></p>
-        <select class="cancel-order-reason select select-bordered w-full" data-role="reason" name="reason">
+        <select class="cancel-order-reason select select-bordered w-full" name="reason" required>
             <?php foreach ($block->getReasons() as $key => $description) : ?>
-                <option value="<?= $escaper->escapeHtmlAttr(__($description)) ?>">
+                <option value="<?= $escaper->escapeHtmlAttr((string) $key) ?>">
                     <?= $escaper->escapeHtml(__($description)) ?>
                 </option>
             <?php endforeach; ?>
         </select>
-        <div class="cancel-order-status" role="status" aria-live="polite" hidden></div>
         <div class="cancel-order-actions mt-4 flex justify-end gap-2">
-            <button type="button" data-role="close" class="btn btn-ghost">
+            <button type="submit" formmethod="dialog" formnovalidate class="btn btn-ghost">
                 <span><?= $escaper->escapeHtml(__('Close')) ?></span>
             </button>
-            <button type="button" data-role="confirm" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary">
                 <span><?= $escaper->escapeHtml(__('Confirm')) ?></span>
             </button>
         </div>
-    </div>
+    </form>
 </dialog>
-<script src="<?= $escaper->escapeUrl($block->getViewFileUrl('js/cancel-order.js')) ?>" defer></script>

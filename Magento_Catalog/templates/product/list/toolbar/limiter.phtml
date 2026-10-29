@@ -29,7 +29,7 @@
             <?php else:
                 $limitUrl = $block->getPagerUrl(['product_list_limit' => $_key]);
                 ?>
-                <a href="<?= $block->escapeUrl($limitUrl) ?>"
+                <a rel="nofollow" href="<?= $block->escapeUrl($limitUrl) ?>"
                    hx-get="<?= $block->escapeUrl($limitUrl) ?>"
                    hx-target="#page-columns" hx-select="#page-columns"
                    hx-swap="outerHTML" hx-push-url="true"

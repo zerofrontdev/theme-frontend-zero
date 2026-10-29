@@ -31,7 +31,7 @@
                     <?php else :
                         $modeUrl = $block->getPagerUrl(['product_list_mode' => $_code]);
                         ?>
-                        <a class="modes-mode mode-<?= $block->escapeHtmlAttr(strtolower($_code)) ?>
+                        <a rel="nofollow" class="modes-mode mode-<?= $block->escapeHtmlAttr(strtolower($_code)) ?>
                                     btn btn-xs join-item btn-ghost"
                            title="<?= $block->escapeHtmlAttr($_label) ?>"
                            href="<?= $block->escapeUrl($modeUrl) ?>"
