@@ -8,3 +8,6 @@
 "Save %1%","Знижка %1%"
 "Please check the shipping address information. %1","Перевірте адресу доставки. %1"
 """%fieldName"" is required. Enter and try again.","Поле «%fieldName» обов'язкове. Заповніть його й спробуйте ще раз."
+"Tick ""I'm not a robot"" first.","Спочатку поставте позначку «Я не робот»."
+"The reCAPTCHA could not load. Check your connection or ad blocker, then reload the page.","Не вдалося завантажити reCAPTCHA. Перевірте з'єднання або блокувальник реклами й оновіть сторінку."
+"Items priced on request are not added to the cart: use Request a Price on each of them.","Товари з ціною за запитом не додаються до кошика: для кожного з них натисніть «Запитати ціну»."

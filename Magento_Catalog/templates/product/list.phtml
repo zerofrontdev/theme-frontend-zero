@@ -12,7 +12,9 @@
  * badges (Zero_Core's zero.product.badges block, absent under other themes).
  * With Zero_Core's `card_cache` argument each card comes from the block cache
  * (ViewModel\ProductCardCache); Add to Cart's URL carries the current page, so
- * it goes in as placeholders after the card is rendered or loaded.
+ * it goes in as placeholders after the card is rendered or loaded. A Price on
+ * Request product (Zero_QuoteRequest's zero.quote.card block) gets "Request a
+ * Price", a link to its page's request form, instead of the Add to Cart form.
  *
  * @var $block \Magento\Catalog\Block\Product\ListProduct
  * @var \Magento\Framework\Escaper $escaper
@@ -53,6 +55,8 @@ $_helper = $block->getData('outputHelper');
     $badgesBlock = $block->getLayout()->getBlock('zero.product.badges');
     // Zero_QuickView's button, when the module is there (rendered per card, as the badges).
     $quickViewBlock = $block->getLayout()->getBlock('zero.quickview.button');
+    // Zero_QuoteRequest's "Request a Price" for a Price on Request product, in place of Add to Cart.
+    $quoteCardBlock = $block->getLayout()->getBlock('zero.quote.card');
     /** @var \Zero\Core\ViewModel\ProductCardCache|null $cardCache */
     $cardCache = $block->getData('card_cache');
     $renderCard = function ($_product) use (
@@ -65,7 +69,8 @@ $_helper = $block->getData('outputHelper');
         $templateType,
         $pos,
         $badgesBlock,
-        $quickViewBlock
+        $quickViewBlock,
+        $quoteCardBlock
     ): string {
         ob_start();
         ?>
@@ -106,7 +111,12 @@ $_helper = $block->getData('outputHelper');
                         <div class="product-item-inner">
                             <div class="product actions product-item-actions"<?= ($pos && strpos($pos, $viewMode . '-actions')) ? ' style="' . $escaper->escapeHtmlAttr($position) . '"' : '' ?>>
                                 <div class="actions-primary"<?= ($pos && strpos($pos, $viewMode . '-primary')) ? ' style="' . $escaper->escapeHtmlAttr($position) . '"' : '' ?>>
-                                    <?php if ($_product->isSaleable()):?>
+                                    <?php $quoteCardHtml = $quoteCardBlock
+                                        ? trim($quoteCardBlock->setProduct($_product)->toHtml())
+                                        : ''; ?>
+                                    <?php if ($_product->isSaleable() && $quoteCardHtml !== ''):?>
+                                        <?= /* @noEscape */ $quoteCardHtml ?>
+                                    <?php elseif ($_product->isSaleable()):?>
                                         <?php /*
                                          * The form id lets the card's swatch radios (rendered earlier by
                                          * Magento_Swatches::product/listing/renderer.phtml) join this form via

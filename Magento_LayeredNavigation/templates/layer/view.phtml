@@ -46,7 +46,8 @@
                 <?php
                 $lazyAfter = 12;
                 $shown = 0;
-                $only = (string) $block->getRequest()->getParam('zf');
+                $only = $block->getRequest()->getParam('zf');
+                $only = is_scalar($only) ? (string) $only : '';
                 ?>
                 <?php foreach ($block->getFilters() as $filter) : ?>
                     <?php if (!$wrapOptions) : ?>

@@ -53,7 +53,14 @@ $wishlstViewModel = $block->getData('wishlistDataViewModel');
                                         \Magento\Catalog\Pricing\Price\ConfiguredPriceInterface::CONFIGURED_PRICE_CODE
                                     ) ?>
                                     <div class="product-item-actions">
-                                        <?php if ($product->isSaleable()) : ?>
+                                        <?php // Zero_QuoteRequest: a Price on Request product gets "Request a Price", not Add to Cart. ?>
+                                        <?php $quoteCardBlock = $block->getLayout()->getBlock('zero.quote.card'); ?>
+                                        <?php $quoteCardHtml = $quoteCardBlock && $product->isSaleable()
+                                            ? trim($quoteCardBlock->setProduct($product)->toHtml())
+                                            : ''; ?>
+                                        <?php if ($quoteCardHtml !== '') : ?>
+                                            <div class="actions-primary"><?= /* @noEscape */ $quoteCardHtml ?></div>
+                                        <?php elseif ($product->isSaleable()) : ?>
                                             <div class="actions-primary">
                                                 <form method="post"
                                                       action="<?= $escaper->escapeUrl($block->getUrl('wishlist/index/cart')) ?>">

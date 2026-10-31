@@ -15,8 +15,14 @@
 ?>
 <?php $swatchData = $block->getSwatchData(); ?>
 <?php
-// Several values at once (Zero_LayeredNavigation: ?color=49,50): which are chosen.
-$chosenOptions = array_map('strval', array_filter(explode(',', (string) $block->getRequest()->getParam($swatchData['attribute_code']))));
+// Several values at once (Zero_LayeredNavigation: ?color=49,50 or color[]=49): which are chosen.
+// Only scalar values count (as in Zero\LayeredNavigation\Model\Values, which this theme does not require):
+// a nested array such as color[a][b]=1 chooses nothing instead of breaking the page.
+$chosenParam = $block->getRequest()->getParam($swatchData['attribute_code']);
+$chosenOptions = is_array($chosenParam)
+    ? array_filter($chosenParam, 'is_scalar')
+    : (is_scalar($chosenParam) ? explode(',', (string) $chosenParam) : []);
+$chosenOptions = array_map('strval', array_filter($chosenOptions, static fn ($v) => (string) $v !== ''));
 ?>
 <div class="swatch-attribute swatch-layered <?= $block->escapeHtmlAttr($swatchData['attribute_code']) ?>"
      data-attribute-code="<?= $block->escapeHtmlAttr($swatchData['attribute_code']) ?>"

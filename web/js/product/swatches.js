@@ -4,6 +4,9 @@
  *
  * Product page swatches: disables combinations that don't exist, names the
  * chosen option, swaps the gallery image and the price for the chosen variant.
+ * With custom options on the page, the variant's price goes to custom-options.js
+ * (data-zero-base on the price wrapper, then a zero:price-base event), which
+ * writes the one price: variant plus options.
  * Data comes from <script type="application/json" id="zero-swatches-config"> next to the
  * markup (no inline script: the storefront runs under a strict CSP).
  */
@@ -46,6 +49,7 @@
     var wrapper = box && box.querySelector('.price-wrapper[data-price-type="finalPrice"]');
     var priceEl = wrapper && wrapper.querySelector('.price');
     var basePrice = priceEl ? priceEl.textContent : '';
+    var hasCustomOptions = !!document.getElementById('zero-custom-options-config');
     var format = new Intl.NumberFormat(document.documentElement.lang || undefined, { style: 'currency', currency: settings.currency });
 
     function attrOf(el) {
@@ -116,7 +120,17 @@
 
         if (priceEl) {
             var prices = complete && matching.length === 1 && config.optionPrices && config.optionPrices[matching[0]];
-            priceEl.textContent = prices ? format.format(prices.finalPrice.amount) : basePrice;
+            // The variant's price is the base custom options add to: with custom
+            // options on the page, custom-options.js is the one price writer.
+            if (prices) {
+                wrapper.dataset.zeroBase = String(prices.finalPrice.amount);
+            } else {
+                delete wrapper.dataset.zeroBase;
+            }
+            if (!hasCustomOptions) {
+                priceEl.textContent = prices ? format.format(prices.finalPrice.amount) : basePrice;
+            }
+            wrapper.dispatchEvent(new CustomEvent('zero:price-base', { bubbles: true }));
         }
     }
 

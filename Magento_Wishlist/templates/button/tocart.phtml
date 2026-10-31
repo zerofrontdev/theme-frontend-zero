@@ -8,15 +8,42 @@
  * "Add All to Cart" with formaction, like item/column/cart.phtml; Allcart
  * reads the form's qty[] fields.
  *
+ * Zero_QuoteRequest: Price on Request items are not bought this way (the
+ * cart refuses them and they stay in the wish list): a note says so, and the
+ * button is left out when every salable item is one.
+ *
  * @var \Magento\Wishlist\Block\Customer\Wishlist\Button $block
  * @var \Magento\Framework\Escaper $escaper
  */
+$wishlist = $block->getWishlist();
+$quoteCardBlock = $block->getLayout()->getBlock('zero.quote.card');
+$quoteCard = $quoteCardBlock ? $quoteCardBlock->getData('quote_card') : null;
+$buyable = 0;
+$quoteOnly = 0;
+if ($quoteCard && $wishlist->getItemsCount()) {
+    foreach ($wishlist->getItemCollection() as $wishlistItem) {
+        $wishlistProduct = $wishlistItem->getProduct();
+        if (!$wishlistProduct || !$wishlistProduct->isSaleable()) {
+            continue;
+        }
+        if ($quoteCard->isQuoteOnly($wishlistProduct)) {
+            $quoteOnly++;
+        } else {
+            $buyable++;
+        }
+    }
+}
 ?>
 
-<?php if ($block->getWishlist()->getItemsCount() && $block->getWishlist()->isSalable()) : ?>
+<?php if ($wishlist->getItemsCount() && $wishlist->isSalable() && (!$quoteOnly || $buyable)) : ?>
     <button type="submit"
             formaction="<?= $escaper->escapeUrl($block->getUrl('wishlist/index/allcart')) ?>"
             data-role="all-tocart" title="<?= $escaper->escapeHtmlAttr(__('Add All to Cart')) ?>" class="action tocart btn btn-neutral hover:bg-primary hover:text-primary-content">
         <span><?= $escaper->escapeHtml(__('Add All to Cart')) ?></span>
     </button>
+<?php endif;?>
+<?php if ($quoteOnly) : ?>
+    <p class="zero-quote-wishlist-note text-sm opacity-70" data-quote-wishlist-note>
+        <?= $escaper->escapeHtml(__('Items priced on request are not added to the cart: use Request a Price on each of them.')) ?>
+    </p>
 <?php endif;?>

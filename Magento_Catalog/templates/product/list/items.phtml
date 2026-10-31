@@ -7,7 +7,9 @@
  *
  * Related/upsell/crosssell lists: no inline `display:none` (stock's JS
  * revealed them); composite products link to their page; "Select all" for
- * related checkboxes is a small script; photos carry the badges.
+ * related checkboxes is a small script; photos carry the badges. A Price on
+ * Request product (Zero_QuoteRequest's zero.quote.card block) gets "Request a
+ * Price" instead of Add to Cart, and no related checkbox.
  *
  * @var $block \Magento\Catalog\Block\Product\AbstractProduct
  */
@@ -220,9 +222,14 @@ $_item = null;
                 <div class="products wrapper grid products-grid products-<?= $block->escapeHtmlAttr($type) ?>">
                     <ol class="products list items product-items">
                         <?php $badgesBlock = $block->getLayout()->getBlock('zero.product.badges'); ?>
+                        <?php $quoteCardBlock = $block->getLayout()->getBlock('zero.quote.card'); ?>
                         <?php foreach ($items as $_item):?>
                             <?php $available = ''; ?>
-                            <?php if (!$_item->isComposite() && $_item->isSaleable() && $type == 'related'):?>
+                            <?php $quoteCardHtml = $quoteCardBlock && $_item->isSaleable()
+                                ? trim($quoteCardBlock->setProduct($_item)->toHtml())
+                                : ''; ?>
+                            <?php if (!$_item->isComposite() && $_item->isSaleable() && $type == 'related'
+                                && $quoteCardHtml === ''):?>
                                 <?php if (!$_item->getRequiredOptions()):?>
                                     <?php $available = 'related-available'; ?>
                                 <?php endif; ?>
@@ -256,7 +263,7 @@ $_item = null;
                                     <?php endif; ?>
 
                                     <?php if ($canItemsAddToCart && !$_item->isComposite() && $_item->isSaleable()
-                                        && $type == 'related'):?>
+                                        && $type == 'related' && $quoteCardHtml === ''):?>
                                         <?php if (!$_item->getRequiredOptions()):?>
                                             <div class="field choice related">
                                                 <input
@@ -279,7 +286,9 @@ $_item = null;
                                             <?php if ($showCart):?>
                                                 <div class="actions-primary">
                                                 <?php if ($_item->isSaleable()):?>
-                                                    <?php if (!$_item->getTypeInstance()->isPossibleBuyFromList($_item)):?>
+                                                    <?php if ($quoteCardHtml !== ''):?>
+                                                        <?= /* @noEscape */ $quoteCardHtml ?>
+                                                    <?php elseif (!$_item->getTypeInstance()->isPossibleBuyFromList($_item)):?>
                                                         <a
                                                                 class="action tocart primary btn btn-neutral hover:bg-primary hover:text-primary-content"
                                                                 href="<?= $block->escapeUrl($block->getAddToCartUrl($_item)) ?>"

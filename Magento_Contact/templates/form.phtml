@@ -6,8 +6,9 @@
  * SPDX-License-Identifier: OSL-3.0 OR AFL-3.0
  *
  * Contact Us form: adds the form_key stock omits (every submit failed CSRF);
- * no validation widgets, Post validates. With ReCaptcha on, the button would
- * need ReCaptcha's JS unlock (not rebuilt).
+ * no validation widgets, Post validates. With ReCaptcha on, the button stays
+ * locked until Zero_Core::js/recaptcha.js (loaded by the theme's recaptcha.phtml)
+ * unlocks it.
  *
  * @var \Magento\Contact\Block\ContactForm $block
  * @var \Magento\Framework\View\Element\ButtonLockManager|null $buttonLockManager

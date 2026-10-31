@@ -14,7 +14,8 @@
 
 /** @var \Magento\Framework\View\Element\Template $block */
 
-$queryText = (string) $block->getRequest()->getParam(\Magento\Search\Model\QueryFactory::QUERY_VAR_NAME);
+$queryText = $block->getRequest()->getParam(\Magento\Search\Model\QueryFactory::QUERY_VAR_NAME);
+$queryText = is_scalar($queryText) ? (string) $queryText : '';
 ?>
 <?php if ($queryText !== '' && $block->getSearchTermsLog()->isPageCacheable()): ?>
     <img

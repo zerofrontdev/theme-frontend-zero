@@ -32,7 +32,16 @@ $allowedQty = $viewModel->setItem($item)->getMinMaxQty();
             </div>
         </div>
     <?php endif; ?>
-    <?php if ($product->isSaleable()) : ?>
+    <?php // Zero_QuoteRequest: a Price on Request product gets "Request a Price", not Add to Cart. ?>
+    <?php $quoteCardBlock = $block->getLayout()->getBlock('zero.quote.card'); ?>
+    <?php $quoteCardHtml = $quoteCardBlock && $product->isSaleable()
+        ? trim($quoteCardBlock->setProduct($product)->toHtml())
+        : ''; ?>
+    <?php if ($quoteCardHtml !== '') : ?>
+    <div class="product-item-actions">
+        <div class="actions-primary"><?= /* @noEscape */ $quoteCardHtml ?></div>
+    </div>
+    <?php elseif ($product->isSaleable()) : ?>
     <div class="product-item-actions">
         <div class="actions-primary">
             <button type="submit"

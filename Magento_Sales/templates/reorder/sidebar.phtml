@@ -8,13 +8,20 @@
  * "Recently Ordered" sidebar, server-rendered from
  * Zero\Core\ViewModel\LastOrderedItems (stock is Knockout-only). The form
  * posts to checkout/cart/addgroup, which rejects an empty selection with a
- * message, so there is no client-side check.
+ * message, so there is no client-side check. A Price on Request product
+ * (Zero_QuoteRequest) gets no checkbox: a "Request a Price" link to its
+ * page's request form instead, as on the product cards.
  *
  * @var \Magento\Sales\Block\Reorder\Sidebar $block
  * @var \Magento\Framework\Escaper $escaper
  */
 $viewModel = $block->getData('lastOrderedItemsViewModel');
 $items = $viewModel ? $viewModel->getItems() : [];
+$quoteCardBlock = $block->getLayout()->getBlock('zero.quote.card');
+$quoteCard = $quoteCardBlock ? $quoteCardBlock->getData('quote_card') : null;
+$quoteOnlyIds = $quoteCard && $items
+    ? array_flip($quoteCard->quoteOnlyIds(array_column($items, 'product_id')))
+    : [];
 ?>
 <?php if (!empty($items)): ?>
 <div class="block block-reorder">
@@ -31,6 +38,18 @@ $items = $viewModel ? $viewModel->getItems() : [];
             <ol id="cart-sidebar-reorder" class="product-items product-items-names">
                 <?php foreach ($items as $item): ?>
                     <li class="product-item">
+                        <?php if (isset($quoteOnlyIds[(int) ($item['product_id'] ?? 0)])): ?>
+                        <div class="field item choice">
+                            <?php if ($item['url']): ?>
+                                <a href="<?= $block->escapeUrl(\Zero\QuoteRequest\ViewModel\Card::formUrl((string) $item['url'])) ?>"
+                                   class="link link-neutral text-sm zero-quote-card" data-quote-card>
+                                    <?= $block->escapeHtml(__('Request a Price')) ?>
+                                </a>
+                            <?php else: ?>
+                                <span class="text-sm opacity-70"><?= $block->escapeHtml(__('Price on request')) ?></span>
+                            <?php endif; ?>
+                        </div>
+                        <?php else: ?>
                         <div class="field item choice">
                             <label class="label" for="reorder-item-<?= $block->escapeHtmlAttr((string) $item['id']) ?>">
                                 <span><?= $block->escapeHtml(__('Add to Cart')) ?></span>
@@ -46,6 +65,7 @@ $items = $viewModel ? $viewModel->getItems() : [];
                                        class="checkbox"/>
                             </div>
                         </div>
+                        <?php endif; ?>
                         <strong class="product-item-name">
                             <?php if ($item['url']): ?>
                                 <a href="<?= $block->escapeUrl($item['url']) ?>" class="product-item-link">

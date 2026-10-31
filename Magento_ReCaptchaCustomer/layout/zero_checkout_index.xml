@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+    Copyright © 2026 Roman Pasichnyk
+    SPDX-License-Identifier: OSL-3.0 OR AFL-3.0
+
+    Zero Checkout's "Already have an account? Sign in" posts to the core loginPost,
+    whose observer refuses a login without the customer_login reCAPTCHA. Same block
+    and config path as Magento_ReCaptchaCustomer's customer_account_login.xml.
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="zero.checkout.login">
+            <block class="Magento\ReCaptchaUi\Block\ReCaptcha" name="zero.checkout.login.recaptcha" as="recaptcha"
+                   template="Magento_ReCaptchaFrontendUi::recaptcha.phtml"
+                   ifconfig="recaptcha_frontend/type_for/customer_login">
+                <arguments>
+                    <argument name="recaptcha_for" xsi:type="string">customer_login</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

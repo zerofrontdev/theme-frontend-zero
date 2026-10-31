@@ -52,9 +52,15 @@ $_product = $block->getProduct();
  * Prices come from the page itself (each choice's
  * `.price-wrapper[data-price-amount]`). `closest('.field.choice')` scopes a
  * price to its own input; a single-value required option has no
- * `.field.choice` and falls back to `.nested.options-list`. The currency
- * symbol is read from a rendered price. Verified with radio/checkbox/
- * single-hidden inputs only; select/multiselect options are untested.
+ * `.field.choice` and falls back to `.nested.options-list`. Amounts are
+ * already in the display currency; the script formats them with
+ * Intl.NumberFormat for the currency below and the page's language.
+ * Verified with radio/checkbox/single-hidden inputs only; select/multiselect
+ * options are untested.
  */ ?>
+<script type="application/json" id="zero-bundle-summary-config"><?= /* @noEscape */ json_encode(
+    ['currency' => (string) $_product->getStore()->getCurrentCurrencyCode()],
+    JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+) ?></script>
 <script src="<?= $block->escapeUrl($block->getViewFileUrl('js/product/bundle-summary.js')) ?>" defer></script>
 <?php endif; ?>

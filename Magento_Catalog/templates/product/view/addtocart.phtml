@@ -11,6 +11,12 @@
  * - Wishlist/compare icons are looked up with getBlock(), not <move>: two
  *   block instances use this template and a move reaches one. The originals
  *   are hidden with CSS, not removed (removing deletes what the lookup needs).
+ * - `main_control_html`: a module's replacement for the qty and Add to Cart
+ *   button (Zero_QuoteRequest's "Ask us for a price" form on a Price on
+ *   Request product). Rendered in their place, also when not salable; the
+ *   wishlist/compare icons stay, the child blocks (shortcut buttons such as
+ *   PayPal, the requisition list) do not, since they buy or add to a list
+ *   meant for the cart.
  *
  * @var $block \Magento\Catalog\Block\Product\View
  * @var \Magento\Framework\Escaper $escaper
@@ -20,10 +26,16 @@
 <?php $buttonTitle = __('Add to Cart'); ?>
 <?php $wishlistBlock = $block->getLayout()->getBlock('view.addto.wishlist'); ?>
 <?php $compareBlock = $block->getLayout()->getBlock('view.addto.compare'); ?>
-<?php if ($_product->isSaleable()):?>
+<?php $mainControl = (string) $block->getData('main_control_html'); ?>
+<?php if ($_product->isSaleable() || $mainControl !== ''):?>
 <div class="box-tocart">
     <div class="fieldset">
         <div class="actions flex flex-wrap items-center gap-3">
+            <?php if ($mainControl !== ''):?>
+            <div class="box-tocart-main basis-full">
+                <?= /* @noEscape */ $mainControl ?>
+            </div>
+            <?php else:?>
             <?php if ($block->shouldRenderQuantity()):?>
             <div class="field qty flex-none h-10">
                 <label class="label sr-only" for="qty"><span><?= $escaper->escapeHtml(__('Qty')) ?></span></label>
@@ -54,6 +66,7 @@
                     id="product-addtocart-button">
                 <span><?= $escaper->escapeHtml($buttonTitle) ?></span>
             </button>
+            <?php endif; ?>
             <?php if ($wishlistBlock || $compareBlock): ?>
                 <div class="box-tocart-icon-actions flex flex-none gap-3">
                     <?php if ($wishlistBlock): ?>
@@ -64,7 +77,9 @@
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
-            <?= $block->getChildHtml('', true) ?>
+            <?php if ($mainControl === ''):?>
+                <?= $block->getChildHtml('', true) ?>
+            <?php endif; ?>
         </div>
     </div>
 </div>

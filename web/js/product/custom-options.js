@@ -2,7 +2,9 @@
  * Copyright © 2026 Roman Pasichnyk
  * SPDX-License-Identifier: OSL-3.0 OR AFL-3.0
  *
- * Product custom options: the shown price includes the chosen options.
+ * Product custom options: the shown price includes the chosen options. On a
+ * configurable product the base is the chosen variant's price (data-zero-base,
+ * set by swatches.js), else the product's own.
  * Data comes from <script type="application/json" id="zero-custom-options-config"> next to the
  * markup (no inline script: the storefront runs under a strict CSP).
  */
@@ -22,7 +24,6 @@
     if (!form || !priceEl) {
         return;
     }
-    var base = parseFloat(wrapper.getAttribute('data-price-amount')) || 0;
     var format = new Intl.NumberFormat(document.documentElement.lang || undefined, { style: 'currency', currency: currency });
 
     function amount(entry) {
@@ -57,12 +58,15 @@
                 picked[key] = config[id][value] ? amount(config[id][value]) : amount(config[id]);
             });
         });
-        var total = base;
+        // The chosen variant's price when swatches.js set one, else the product's.
+        var total = parseFloat(wrapper.dataset.zeroBase ?? wrapper.getAttribute('data-price-amount')) || 0;
         Object.keys(picked).forEach(function (key) { total += picked[key]; });
         priceEl.textContent = format.format(total);
     }
 
     form.addEventListener('change', update);
     form.addEventListener('input', update);
+    // swatches.js announces a new variant price (the price box may sit outside the form).
+    document.addEventListener('zero:price-base', update);
     update();
 })();

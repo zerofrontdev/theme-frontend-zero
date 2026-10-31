@@ -15,17 +15,24 @@
         return;
     }
 
-    var sampleAmount = document.querySelector('.price-wrapper[data-price-amount] .price');
-    var currencySymbol = '$';
-    if (sampleAmount) {
-        var match = sampleAmount.textContent.match(/^[^\d]*/);
-        if (match && match[0].trim()) {
-            currencySymbol = match[0].trim();
+    // Amounts on the page are already in the display currency: format only.
+    // Without a currency (or one Intl doesn't know), a plain number.
+    var formatter = null;
+    try {
+        var configEl = document.getElementById('zero-bundle-summary-config');
+        var currency = configEl ? JSON.parse(configEl.textContent).currency : '';
+        if (currency) {
+            formatter = new Intl.NumberFormat(document.documentElement.lang || undefined, {
+                style: 'currency',
+                currency: currency
+            });
         }
+    } catch (e) {
+        formatter = null;
     }
 
     function formatPrice(amount) {
-        return currencySymbol + amount.toFixed(2);
+        return formatter ? formatter.format(amount) : amount.toFixed(2);
     }
 
     function scopeFor(input) {

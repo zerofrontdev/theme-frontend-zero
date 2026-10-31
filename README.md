@@ -61,6 +61,8 @@ scripts/              collect-module-styles.mjs, copy-htmx.mjs, minify-theme-css
 docs/                 the developer docs above
 ```
 
+What changed in each release: [CHANGELOG.md](CHANGELOG.md).
+
 ## License
 
 OSL-3.0 or AFL-3.0, your choice: see `NOTICE.md`.

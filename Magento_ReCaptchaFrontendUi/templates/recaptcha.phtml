@@ -1,0 +1,37 @@
+<?php
+/**
+ * Copyright 2020 Adobe
+ * All Rights Reserved.
+ * Modifications copyright © 2026 Roman Pasichnyk
+ * SPDX-License-Identifier: OSL-3.0 OR AFL-3.0
+ *
+ * Google reCAPTCHA (v2 checkbox, v2 invisible, v3) without Magento's
+ * x-magento-init / Knockout component, which the Zero theme does not load.
+ * The block's settings go into one data attribute; Zero_Core::js/recaptcha.js
+ * (static, deferred, strict-CSP safe) renders the widget, loads Google's
+ * script when the form is near and checks the token before the form submits.
+ * The server side is Magento's own (g-recaptcha-response).
+ *
+ * @var \Magento\ReCaptchaUi\Block\ReCaptcha $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+
+$config = $block->getCaptchaUiConfig();
+$settings = json_encode(
+    [
+        'for' => (string) $block->getData('recaptcha_for'),
+        'rendering' => $config['rendering'] ?? [],
+        'invisible' => !empty($config['invisible']),
+        'form' => null,
+    ],
+    JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+);
+?>
+<div class="field-recaptcha my-3" id="<?= $escaper->escapeHtmlAttr($block->getRecaptchaId()) ?>-container"
+     data-zero-recaptcha="<?= $escaper->escapeHtmlAttr($settings) ?>"
+     data-zero-recaptcha-required="<?= $escaper->escapeHtmlAttr(__('Tick "I\'m not a robot" first.')) ?>"
+     data-zero-recaptcha-failed="<?= $escaper->escapeHtmlAttr(__('The reCAPTCHA could not load. Check your connection or ad blocker, then reload the page.')) ?>">
+    <div data-zero-recaptcha-widget></div>
+    <p data-zero-recaptcha-error role="alert" hidden class="text-error text-sm mt-2"></p>
+</div>
+<script src="<?= $escaper->escapeUrl($block->getViewFileUrl('Zero_Core::js/recaptcha.js')) ?>" defer></script>

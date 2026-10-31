@@ -72,7 +72,14 @@
                             <?= /* @noEscape */ $block->getProductPrice($item, '-compare-list-top') ?>
                             <div class="product-item-actions hidden-print">
                                 <div class="actions-primary">
-                                    <?php if ($item->isSaleable()) :?>
+                                    <?php // Zero_QuoteRequest: a Price on Request product gets "Request a Price", not Add to Cart. ?>
+                                    <?php $quoteCardBlock = $block->getLayout()->getBlock('zero.quote.card'); ?>
+                                    <?php $quoteCardHtml = $quoteCardBlock && $item->isSaleable()
+                                        ? trim($quoteCardBlock->setProduct($item)->toHtml())
+                                        : ''; ?>
+                                    <?php if ($quoteCardHtml !== '') :?>
+                                        <?= /* @noEscape */ $quoteCardHtml ?>
+                                    <?php elseif ($item->isSaleable()) :?>
                                         <form data-role="tocart-form"
                                               action="<?= $block->escapeUrl($this->helper(Magento\Catalog\Helper\Product\Compare::class)->getAddToCartUrl($item)) ?>"
                                               method="post">

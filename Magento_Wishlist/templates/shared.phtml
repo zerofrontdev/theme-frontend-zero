@@ -59,7 +59,14 @@
                         </td>
                         <td data-th="<?= $block->escapeHtmlAttr(__('Add to Cart')) ?>" class="col actions"
                             data-role="add-to-links">
-                            <?php if ($product->isSaleable()): ?>
+                            <?php // Zero_QuoteRequest: a Price on Request product gets "Request a Price", not Add to Cart. ?>
+                            <?php $quoteCardBlock = $block->getLayout()->getBlock('zero.quote.card'); ?>
+                            <?php $quoteCardHtml = $quoteCardBlock && $product->isSaleable()
+                                ? trim($quoteCardBlock->setProduct($product)->toHtml())
+                                : ''; ?>
+                            <?php if ($quoteCardHtml !== ''): ?>
+                                <?= /* @noEscape */ $quoteCardHtml ?>
+                            <?php elseif ($product->isSaleable()): ?>
                                 <?php if ($isVisibleProduct): ?>
                                     <button type="submit"
                                             formaction="<?= $block->escapeUrl($block->getUrl('wishlist/shared/cart')) ?>"

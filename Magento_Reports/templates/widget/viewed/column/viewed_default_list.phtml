@@ -46,7 +46,12 @@ use Magento\Framework\Pricing\Render;
                                 ['price_id_suffix' => '-widget-viewed']
                             ) ?>
                             <?php if ($_product->isSaleable()): ?>
-                                <?php if (!$_product->getTypeInstance()->isPossibleBuyFromList($_product)): ?>
+                                <?php // Zero_QuoteRequest: a Price on Request product gets "Request a Price", not Add to Cart. ?>
+                                <?php $quoteCardBlock = $block->getLayout()->getBlock('zero.quote.card'); ?>
+                                <?php $quoteCardHtml = $quoteCardBlock ? trim($quoteCardBlock->setProduct($_product)->toHtml()) : ''; ?>
+                                <?php if ($quoteCardHtml !== ''): ?>
+                                    <?= /* @noEscape */ $quoteCardHtml ?>
+                                <?php elseif (!$_product->getTypeInstance()->isPossibleBuyFromList($_product)): ?>
                                     <a class="action tocart link link-primary text-sm no-underline hover:underline"
                                        href="<?= $escaper->escapeUrl($block->getAddToCartUrl($_product)) ?>"
                                        title="<?= $escaper->escapeHtmlAttr(__('Add to Cart')) ?>">

@@ -72,7 +72,12 @@ use Magento\Wishlist\Helper\Data as WishlistHelper;
                                     <div class="product actions product-item-actions">
                                         <div class="actions-primary">
                                             <?php if ($_item->isSaleable()): ?>
-                                                <?php if (!$_item->getTypeInstance()->isPossibleBuyFromList($_item)): ?>
+                                                <?php // Zero_QuoteRequest: a Price on Request product gets "Request a Price", not Add to Cart. ?>
+                                                <?php $quoteCardBlock = $block->getLayout()->getBlock('zero.quote.card'); ?>
+                                                <?php $quoteCardHtml = $quoteCardBlock ? trim($quoteCardBlock->setProduct($_item)->toHtml()) : ''; ?>
+                                                <?php if ($quoteCardHtml !== ''): ?>
+                                                    <?= /* @noEscape */ $quoteCardHtml ?>
+                                                <?php elseif (!$_item->getTypeInstance()->isPossibleBuyFromList($_item)): ?>
                                                     <a class="action tocart primary btn btn-neutral hover:bg-primary hover:text-primary-content"
                                                        href="<?= $escaper->escapeUrl($block->getAddToCartUrl($_item)) ?>"
                                                        title="<?= $escaper->escapeHtmlAttr(__('Add to Cart')) ?>">
