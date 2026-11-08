@@ -69,10 +69,5 @@ OSL-3.0 or AFL-3.0, your choice: see `NOTICE.md`.
 
 ---
 
-<a href="https://vilmate.com"><picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/zerofrontdev/zero/main/docs/images/vilmate-logo-dark.svg">
-  <img src="https://raw.githubusercontent.com/zerofrontdev/zero/main/docs/images/vilmate-logo.svg" alt="Vilmate" height="34" align="right">
-</picture></a>
-
-Zero is made by [Fixstacks](https://fixstacks.com) in partnership with [Vilmate](https://vilmate.com), a software development company.
+Zero is made by [Fixstacks](https://fixstacks.com).
 Documentation: https://zerofront.dev/docs. Demo store: https://demo.zerofront.dev.
